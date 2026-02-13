@@ -1,7 +1,5 @@
 # AuraGrid Grid Performance Monitoring
 
-Student: Khaled Eissa  
-Date: February 13, 2026
 
 ## Setup
 
