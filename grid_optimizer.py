@@ -28,13 +28,57 @@ class GridDataProcessor:
             raise IOError(f"Error reading file: {e}")
     
     def clean_data(self):
+        """
+        Clean data by converting Time to datetime and removing nulls.
+        
+        Steps:
+        1. Convert 'Time' column to datetime format
+        2. Remove rows with null 'Power_Output' values
+        3. Log cleaning statistics
+        """
+        # Check if data is loaded
         if self.dataframe is None:
             raise ValueError("No data loaded")
+
+        try:
+            print("Start Cleaning the data")
+            
+            # Calculate total rows before cleaning
+            total_rows = len(self.dataframe)
+            
+            ## Convert 'Time' to datetime
+            self.dataframe['Time'] = pd.to_datetime(self.dataframe['Time'], errors='coerce')
+            # Drop any NaT produced where time conversion failed
+            self.dataframe = self.dataframe.dropna(subset=["Time"])
+            
+            ## Validate data types
+            numeric_cols = ["Power_Output", "Efficiency_Factor"]
+            for col in numeric_cols:
+                if col in self.dataframe.columns:
+                    self.dataframe[col] = pd.to_numeric(self.dataframe[col], errors="coerce")
+                    
+            ## Remove null 'Power_Output' rows
+            self.dataframe = self.dataframe.dropna(subset=["Power_Output"])
+            
+            current_rows = len(self.dataframe)
+            removed = total_rows - current_rows
+            
+            print(f" Cleaned data: {removed} rows removed")
+            
+            removed_rows_percentage = (removed / total_rows) * 100
+            print(f"Percentage of removed rows is {removed_rows_percentage:.2f}%")
+            
+            return self.dataframe
         
-        self.dataframe['Time'] = pd.to_datetime(self.dataframe['Time'], errors='coerce')
-        self.dataframe = self.dataframe.dropna(subset=['Time', 'Power_Output'])
-        self.dataframe = self.dataframe.reset_index(drop=True)
-        return self.dataframe
+        # If a column is missing
+        except KeyError as e:
+            print(f"An error {e} occured")
+            raise
+        
+        # Any other errors
+        except Exception as e:
+            print(f"Error while cleaning {str(e)}")
+            raise
     
     def transform_data(self):
         if self.dataframe is None:
