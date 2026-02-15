@@ -1,8 +1,8 @@
 # AuraGrid Capstone: Renewable Grid Performance Monitoring System
 
-<<<<<<< HEAD
+
 ## Project Overview
-=======
+---
 
 End-to-end Python application for processing sensor data from renewable energy sources, performing comprehensive time-series analysis, and generating automated visual reports for grid stability monitoring.
 
